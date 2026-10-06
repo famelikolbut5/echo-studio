@@ -1,13 +1,20 @@
-# Validation - 2026-10-06
+# Проверки
 
-Windows / Python 3.12 / Node 22 / pnpm 11.19.0. TypeScript checks and production builds passed locally.
-All examples use synthetic data. Local tests do not imply successful hosted CI or quality on real customer data.
+Проверено 6 октября 2026 на Windows: Python 3.12, Node.js 22 и pnpm 11.19.0.
 
-3 tests passed. Real faster-whisper tiny CPU invocation transcribed our synthetic Russian WAV and produced word timestamps. It misrecognized one word in the final sentence. This is one functional smoke test, not a speech recognition benchmark. Keyword checklist scoring is deterministic, not LLM evaluation. Audio generated using installed Microsoft Irina speech synthesis.
+## Функциональность
 
-Docker image built and started locally as a non-root user. Static UI and health endpoint returned successfully. Authored demo transcript and synthetic WAV endpoints were checked.
+- 3 серверных теста: обработка и проверка чек-листа.
+- Выполнен реальный вызов faster-whisper tiny на CPU для синтетической русской записи; получены временные метки слов. В последней фразе было неверно распознано одно слово. Это функциональная проверка, а не измерение точности на реальных звонках.
+- В браузере проверены воспроизведение WAV, переход по репликам, ручная смена роли и подтверждающие реплики для трёх пунктов чек-листа.
+- Проверка чек-листа выполняется по ключевым словам и не является оценкой языковой моделью.
 
-## Selected interface verification
+## Сборка и запуск
 
-Final TypeScript/Vite build passed. Browser review at measured 1454 × 818 desktop and 443 px mobile width found no horizontal page overflow. Escape closes project dialogs. `preview.png` is an actual local application screenshot, not a design mockup.
-Actual WAV playback and transcript seeking were checked; a speaker role was changed manually. The keyword checklist showed evidence for 3/3 checks.
+- TypeScript и сборка Vite прошли.
+- Команды Docker Compose из README выполнены: контейнер запустился, API health вернул `ok`, интерфейс доступен на порту 8000.
+- GitHub Actions запускает серверные тесты, проверку TypeScript, сборку интерфейса и Docker-образа. Актуальный результат доступен по значку проверок в README.
+
+## Интерфейс
+
+Превью сделаны с работающего приложения. Проверены ширины 1454 и 443 пикселя: горизонтального переполнения страницы нет. В режиме снимка отсутствуют полосы прокрутки.

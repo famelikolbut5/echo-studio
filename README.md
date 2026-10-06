@@ -1,59 +1,50 @@
 # Echo Studio
 
-Audio review with synchronized transcripts, evidence-based checklists and local speech recognition.
+Разбор аудиозаписей в одном окне: расшифровка, участники разговора и чек-лист с подтверждающими репликами. Нажатие на реплику переводит запись к нужному моменту.
 
-![Interface](docs/preview.png)
+[![Проверки](https://github.com/famelikolbut5/echo-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/famelikolbut5/echo-studio/actions/workflows/ci.yml)
 
-[Validation notes](docs/VALIDATION.md) · [Source license](LICENSE)
+![Интерфейс Echo Studio](docs/preview.png)
 
-## What it does
+## Возможности
 
-Речь - расшифровка с временными метками - правила чек-листа - проверка фрагмента и экспорт JSON.
+- Загрузка аудио и локальная расшифровка через faster-whisper.
+- Прослушивание записи с переходом по временным меткам.
+- Ручное назначение ролей менеджера и клиента.
+- Проверка чек-листа по ключевым словам и экспорт результата в JSON.
 
-Audio - faster-whisper - word timestamps - transparent keyword checklist - synchronized review.
+## Как устроен проект
 
-Independent portfolio demo, written from scratch. Synthetic examples only. No commercial source, proprietary prompts, client recordings or customer data.
+Распознавание выполняется на сервере, без отправки записи во внешний сервис. Чек-лист показывает найденную реплику и время, чтобы результат можно было проверить на слух. Роли участников можно назначить вручную.
 
-## Run locally
+**Стек:** Python, FastAPI, faster-whisper, React, TypeScript, Vite.
 
-Python 3.12, Node 22 and pnpm 11.19.0:
+## Структура
 
-```sh
-python -m venv .venv
-# Windows: .venv\Scripts\activate
-# Linux/macOS: source .venv/bin/activate
-pip install -r requirements.txt
-pnpm install --frozen-lockfile
-pnpm build
-uvicorn backend.app:app --host 127.0.0.1 --port 8000
+```text
+backend/        обработка аудио, расшифровка и проверка чек-листа
+src/            интерфейс, состояния и работа с API
+public/         синтетическая запись для первого знакомства
+tests/          проверки поведения серверной части
+docs/           запуск, проверки и материалы проекта
+Dockerfile      сборка интерфейса и серверного приложения
+compose.yml     локальный запуск с сохранением данных
 ```
 
-Open http://127.0.0.1:8000. For UI development: `pnpm dev` (API proxy expects port 8000).
+## Запуск
+
+Нужны Git и Docker. Каждый проект запускается отдельно на порту 8000.
 
 ```sh
+git clone https://github.com/famelikolbut5/echo-studio.git
+cd echo-studio
 docker compose up --build
 ```
 
-Local-only binding is deliberate. These demos have no user authentication and are not hardened multi-user hosted services.
+Откройте [localhost:8000](http://localhost:8000). [Запуск без Docker и настройки](docs/RUNNING.md).
 
-## Checks and delivery
+## Состав демоверсии
 
-```sh
-pip install pytest httpx
-pytest -q
-pnpm build
-```
+В комплекте есть синтетическая запись с подготовленной расшифровкой. Можно загрузить собственное аудио и запустить распознавание на сервере.
 
-GitHub Actions runs backend checks, TypeScript/build checks and Docker image build. Model credentials are never included in CI or a public image.
-
-## Boundaries
-
-Роли назначаются вручную. tiny проверен только на синтетическом примере; точность на звонках не измерена. Чек-лист не является оценкой LLM.
-
-The full application runs locally with its Python backend. A static build alone cannot transcribe audio, execute workflows, render video or call Codex.
-
-## Stack and attribution
-
-Python / FastAPI / React / TypeScript / Vite / Motion / Lucide. Google Fonts: Golos Text (SIL OFL). All third-party dependencies retain their own licenses. See `THIRD_PARTY.md`.
-
-MIT for independently authored source. Asset provenance and actual validation: `docs/VALIDATION.md`.
+[Проверки и результаты](docs/VALIDATION.md) | [Лицензии зависимостей и материалов](THIRD_PARTY.md) | [MIT](LICENSE)
